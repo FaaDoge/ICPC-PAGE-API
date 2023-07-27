@@ -31,6 +31,7 @@ const addUsuario = async (req, res) => {
     res.status(500).json({ error: 'Error al agregar el usuario' });
   }
 };
+
 updateUsuario = async (req, res) => {
   const { user_id } = req.params;
   const { username, email, password_hash } = req.body;

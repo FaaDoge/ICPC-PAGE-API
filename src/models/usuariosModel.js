@@ -14,15 +14,12 @@ const getUsuarioById = async (user_id) => {
 };
 
 const addUsuario = async (username, email, password_hash, created_at) => {
-  try {
-    const query = 'INSERT INTO usuarios (username, email, password_hash, created_at) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [username, email, password_hash, created_at];
-    const { rows } = await pool.query(query, values);
-    return rows[0];
-  } catch (error) {
-    throw error;
-  }
+  const query = 'INSERT INTO usuarios (username, email, password_hash, created_at) VALUES ($1, $2, $3, $4) RETURNING *;';
+  const values = [username, email, password_hash, created_at];
+  const { rows } = await pool.query(query, values);
+  return rows[0];
 };
+
 
 
 const updateUsuario = async (user_id, username, email, password_hash) => {
