@@ -30,8 +30,9 @@ const updateUsuario = async (user_id, username, email, password_hash) => {
 };
 
 const deleteUsuario = async (user_id) => {
-  const query = 'DELETE FROM usuarios WHERE user_id = $1;';
-  await pool.query(query, [user_id]);
+  const query = 'DELETE FROM usuarios WHERE user_id = $1 RETURNING *;';
+  const { rows } = await pool.query(query, [user_id]);
+  return rows[0];
 };
 
 module.exports = {
