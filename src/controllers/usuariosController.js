@@ -49,13 +49,15 @@ updateUsuario = async (req, res) => {
 const deleteUsuario = async (req, res) => {
   const { user_id } = req.params;
   try {
-    await usuariosModel.deleteUsuario(user_id);
-    res.status(204).end();
+    const usuarioEliminado = await usuariosModel.deleteUsuario(user_id);
+    if (!usuarioEliminado) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.status(200).json({ message: 'Usuario eliminado exitosamente', usuario: usuarioEliminado });
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 };
-
 module.exports = {
   getAllUsuarios,
   getUsuarioById,
