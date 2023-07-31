@@ -1,5 +1,5 @@
-// temasController.js
 const temasModel = require('../models/temasModel');
+const { temasValidation } = require('../validations/validations');
 
 const getAllTemas = async (req, res) => {
   try {
@@ -24,6 +24,11 @@ const getTemaById = async (req, res) => {
 };
 
 const addTema = async (req, res) => {
+  const { error } = temasValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { title, content, category_id, created_at } = req.body;
   try {
     const nuevoTema = await temasModel.addTema(title, content, category_id, created_at);
@@ -35,6 +40,11 @@ const addTema = async (req, res) => {
 
 const updateTema = async (req, res) => {
   const { topic_id } = req.params;
+  const { error } = temasValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { title, content, category_id } = req.body;
   try {
     const tema = await temasModel.updateTema(topic_id, title, content, category_id);
@@ -57,10 +67,22 @@ const deleteTema = async (req, res) => {
   }
 };
 
+const getTemasByCategoryId = async (req, res) => {
+  const { category_id } = req.params;
+
+  try {
+    const temas = await temasModel.getTemasByCategoryId(category_id);
+    res.json(temas);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener los temas por ID de categoría' });
+  }
+};
+
 module.exports = {
   getAllTemas,
   getTemaById,
   addTema,
   updateTema,
   deleteTema,
+  getTemasByCategoryId,
 };

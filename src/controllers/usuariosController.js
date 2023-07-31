@@ -1,4 +1,4 @@
-// usuariosController.js
+const bcrypt = require('bcrypt');
 const usuariosModel = require('../models/usuariosModel');
 
 const getAllUsuarios = async (req, res) => {
@@ -22,21 +22,26 @@ const getUsuarioById = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el usuario' });
   }
 };
+
 const addUsuario = async (req, res) => {
   const { username, email, password_hash, created_at } = req.body;
   try {
-    const nuevoUsuario = await usuariosModel.addUsuario(username, email, password_hash, created_at);
+    const hashedPassword = await bcrypt.hash(password_hash, 10); // Generar el hash de la contraseña con salt 10
+    const nuevoUsuario = await usuariosModel.addUsuario(username, email, hashedPassword, created_at);
     res.status(201).json(nuevoUsuario);
   } catch (error) {
     res.status(500).json({ error: 'Error al agregar el usuario' });
   }
 };
 
-updateUsuario = async (req, res) => {
+const updateUsuario = async (req, res) => {
   const { user_id } = req.params;
-  const { username, email, password_hash } = req.body;
+  const { username, email, password_hash, created_at } = req.body;
   try {
-    const usuario = await usuariosModel.updateUsuario(user_id, username, email, password_hash);
+    // Verificar si se proporcionó una contraseña para actualizarla
+
+    const hashedPassword = await bcrypt.hash(password_hash, 10); // Generar el hash de la contraseña con salt 10
+    const usuario = await usuariosModel.updateUsuario(user_id, username, email, hashedPassword, created_at);
     if (!usuario) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -58,6 +63,7 @@ const deleteUsuario = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 };
+
 module.exports = {
   getAllUsuarios,
   getUsuarioById,

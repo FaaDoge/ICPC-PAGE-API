@@ -1,6 +1,11 @@
 const usuarioRolesModel = require('../models/usuarioRolesModel');
 
 const addUsuarioRol = async (req, res) => {
+  const { error } = usuarioRolesValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { user_id, role_id, assigned_at } = req.body;
   try {
     const nuevoUsuarioRol = await usuarioRolesModel.addUsuarioRol(user_id, role_id, assigned_at);
@@ -9,6 +14,7 @@ const addUsuarioRol = async (req, res) => {
     res.status(500).json({ error: 'Error al agregar el usuario_rol' });
   }
 };
+
 
 const getUsuarioRoles = async (req, res) => {
   try {
@@ -36,6 +42,12 @@ const getUsuarioRolById = async (req, res) => {
 const updateUsuarioRol = async (req, res) => {
   const { user_role_id } = req.params;
   const { user_id, role_id, assigned_at } = req.body;
+
+  const { error } = usuarioRolesValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const usuarioRolActualizado = await usuarioRolesModel.updateUsuarioRol(user_role_id, user_id, role_id, assigned_at);
     if (usuarioRolActualizado) {
@@ -47,6 +59,7 @@ const updateUsuarioRol = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el usuario_rol' });
   }
 };
+
 
 const deleteUsuarioRol = async (req, res) => {
   const { user_role_id } = req.params;

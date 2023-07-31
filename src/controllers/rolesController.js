@@ -1,5 +1,5 @@
-// rolesController.js
 const rolesModel = require('../models/rolesModel');
+const { rolesValidation } = require('../validations/validations');
 
 const getAllRoles = async (req, res) => {
   try {
@@ -24,6 +24,11 @@ const getRoleById = async (req, res) => {
 };
 
 const addRole = async (req, res) => {
+  const { error } = rolesValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { name, description } = req.body;
   try {
     const nuevoRole = await rolesModel.addRole(name, description);
@@ -35,6 +40,11 @@ const addRole = async (req, res) => {
 
 const updateRole = async (req, res) => {
   const { role_id } = req.params;
+  const { error } = rolesValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { name, description } = req.body;
   try {
     const role = await rolesModel.updateRole(role_id, name, description);

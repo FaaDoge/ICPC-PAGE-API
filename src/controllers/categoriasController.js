@@ -1,5 +1,6 @@
 // categoriasController.js
 const categoriasModel = require('../models/categoriasModel');
+const { categoriasValidation } = require('../validations/validations');
 
 const getAllCategorias = async (req, res) => {
   try {
@@ -25,6 +26,11 @@ const getCategoriaById = async (req, res) => {
 
 const addCategoria = async (req, res) => {
   const { name, description } = req.body;
+  const { error } = categoriasValidation({ name, description }); // Validate the request data
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const nuevaCategoria = await categoriasModel.addCategoria(name, description);
     res.status(201).json(nuevaCategoria);
@@ -36,6 +42,11 @@ const addCategoria = async (req, res) => {
 const updateCategoria = async (req, res) => {
   const { category_id } = req.params;
   const { name, description } = req.body;
+  const { error } = categoriasValidation({ name, description }); // Validate the request data
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const categoria = await categoriasModel.updateCategoria(category_id, name, description);
     if (!categoria) {

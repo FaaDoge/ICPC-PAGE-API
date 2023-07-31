@@ -1,5 +1,5 @@
-// personasController.js
 const personasModel = require('../models/personasModel');
+const { personasValidation } = require('../validations/validations');
 
 const getAllPersonas = async (req, res) => {
   try {
@@ -24,6 +24,11 @@ const getPersonaById = async (req, res) => {
 };
 
 const addPersona = async (req, res) => {
+  const { error } = personasValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { user_id, full_name, date_of_birth, bio, country, website, created_at } = req.body;
   try {
     const nuevaPersona = await personasModel.addPersona(user_id, full_name, date_of_birth, bio, country, website, created_at);
@@ -35,6 +40,11 @@ const addPersona = async (req, res) => {
 
 const updatePersona = async (req, res) => {
   const { person_id } = req.params;
+  const { error } = personasValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { full_name, date_of_birth, bio, country, website } = req.body;
   try {
     const persona = await personasModel.updatePersona(person_id, full_name, date_of_birth, bio, country, website);
