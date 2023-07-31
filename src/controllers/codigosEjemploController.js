@@ -1,5 +1,5 @@
-// codigosEjemploController.js
 const codigosEjemploModel = require('../models/codigosEjemploModel');
+const { codigosEjemploValidation } = require('../validations/validations');
 
 const getAllCodigosEjemplo = async (req, res) => {
   try {
@@ -24,6 +24,11 @@ const getCodigoEjemploById = async (req, res) => {
 };
 
 const addCodigoEjemplo = async (req, res) => {
+  const { error } = codigosEjemploValidation(req.body); // Validar los datos del cuerpo de la solicitud
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message }); // Si hay errores de validación, enviar una respuesta de error
+  }
+
   const { code_title, code_content, topic_id, user_id, created_at } = req.body;
   try {
     const nuevoCodigoEjemplo = await codigosEjemploModel.addCodigoEjemplo(code_title, code_content, topic_id, user_id, created_at);
@@ -36,6 +41,13 @@ const addCodigoEjemplo = async (req, res) => {
 const updateCodigoEjemplo = async (req, res) => {
   const { code_id } = req.params;
   const { code_title, code_content, topic_id, user_id } = req.body;
+
+  // Validar los datos del cuerpo de la solicitud
+  const { error } = codigosEjemploValidation(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const codigoEjemplo = await codigosEjemploModel.updateCodigoEjemplo(code_id, code_title, code_content, topic_id, user_id);
     if (!codigoEjemplo) {

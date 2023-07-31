@@ -7,6 +7,12 @@ const getAllTemas = async () => {
   return rows;
 };
 
+const getTemasByCategoryId = async (category_id) => {
+  const query = 'SELECT * FROM temas WHERE category_id = $1;';
+  const { rows } = await pool.query(query, [category_id]);
+  return rows;
+};
+
 const getTemaById = async (topic_id) => {
   const query = 'SELECT * FROM temas WHERE topic_id = $1;';
   const { rows } = await pool.query(query, [topic_id]);
@@ -34,6 +40,7 @@ const deleteTema = async (topic_id) => {
 
 module.exports = {
   getAllTemas,
+  getTemasByCategoryId,
   getTemaById,
   addTema,
   updateTema,
